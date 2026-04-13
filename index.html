@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moo's Tower — Cozy Focus App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Floating particles background -->
+  <div id="particles"></div>
+
+  <!-- Main app container -->
+  <div id="app">
+    <!-- Header -->
+    <header id="header">
+      <div class="logo">
+        <span class="logo-icon">🏠</span>
+        <h1>Moo's Tower</h1>
+      </div>
+      <div class="stats-bar">
+        <div class="stat" title="Fish earned from focus sessions">
+          <span class="stat-icon">🐟</span>
+          <span id="fish-count">0</span>
+        </div>
+        <div class="stat" title="Total focus minutes">
+          <span class="stat-icon">⏱️</span>
+          <span id="total-minutes">0</span><span class="stat-label">min</span>
+        </div>
+        <div class="stat" title="Current streak">
+          <span class="stat-icon">🔥</span>
+          <span id="streak-count">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Room View -->
+    <main id="room-view">
+      <div id="room-container">
+        <!-- Room background layers -->
+        <div id="room-bg">
+          <div class="wall"></div>
+          <div class="floor"></div>
+          <div class="window">
+            <div class="window-frame">
+              <div class="window-sky" id="window-sky">
+                <div class="cloud c1"></div>
+                <div class="cloud c2"></div>
+                <div class="star s1"></div>
+                <div class="star s2"></div>
+                <div class="star s3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Furniture slots -->
+        <div id="furniture-layer">
+          <!-- Furniture items will be placed here dynamically -->
+        </div>
+
+        <!-- Moo the Cat -->
+        <div id="moo" class="moo-idle">
+          <div class="moo-body">
+            <div class="moo-tail"></div>
+            <div class="moo-torso">
+              <div class="moo-stripe s1"></div>
+              <div class="moo-stripe s2"></div>
+              <div class="moo-stripe s3"></div>
+            </div>
+            <div class="moo-head">
+              <div class="moo-ear left"></div>
+              <div class="moo-ear right"></div>
+              <div class="moo-face">
+                <div class="moo-eye left">
+                  <div class="moo-pupil"></div>
+                </div>
+                <div class="moo-eye right">
+                  <div class="moo-pupil"></div>
+                </div>
+                <div class="moo-nose"></div>
+                <div class="moo-mouth"></div>
+                <div class="moo-whisker left top"></div>
+                <div class="moo-whisker left bottom"></div>
+                <div class="moo-whisker right top"></div>
+                <div class="moo-whisker right bottom"></div>
+              </div>
+            </div>
+            <div class="moo-paws">
+              <div class="moo-paw left"></div>
+              <div class="moo-paw right"></div>
+            </div>
+          </div>
+          <!-- Knitting animation (visible during focus) -->
+          <div class="moo-knitting" id="moo-knitting">
+            <div class="yarn-ball"></div>
+            <div class="knitting-needles">
+              <div class="needle n1"></div>
+              <div class="needle n2"></div>
+            </div>
+            <div class="scarf-progress" id="scarf-progress"></div>
+          </div>
+          <!-- Speech bubble -->
+          <div class="speech-bubble" id="speech-bubble">
+            <span id="speech-text">Let's focus together!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timer overlay -->
+      <div id="timer-section">
+        <!-- Pre-focus: timer setup -->
+        <div id="timer-setup" class="timer-panel">
+          <h2>Ready to focus?</h2>
+          <div class="timer-presets">
+            <button class="preset-btn" data-minutes="5">5 min</button>
+            <button class="preset-btn" data-minutes="15">15 min</button>
+            <button class="preset-btn active" data-minutes="25">25 min</button>
+            <button class="preset-btn" data-minutes="45">45 min</button>
+            <button class="preset-btn" data-minutes="60">60 min</button>
+            <button class="preset-btn" data-minutes="90">90 min</button>
+          </div>
+          <div class="custom-time">
+            <input type="range" id="time-slider" min="1" max="120" value="25">
+            <span id="time-display">25 minutes</span>
+          </div>
+          <button id="start-btn" class="big-btn">
+            <span class="btn-icon">▶</span> Start Focus
+          </button>
+        </div>
+
+        <!-- Active focus: timer running -->
+        <div id="timer-active" class="timer-panel hidden">
+          <div class="timer-ring-container">
+            <svg class="timer-ring" viewBox="0 0 200 200">
+              <circle class="timer-ring-bg" cx="100" cy="100" r="90" />
+              <circle class="timer-ring-progress" id="timer-ring-progress" cx="100" cy="100" r="90" />
+            </svg>
+            <div class="timer-display">
+              <span id="timer-minutes">25</span>
+              <span class="timer-sep">:</span>
+              <span id="timer-seconds">00</span>
+            </div>
+          </div>
+          <div class="fish-earning">
+            <span class="earning-label">Earning:</span>
+            <span id="fish-earning-count">0</span>
+            <span class="stat-icon">🐟</span>
+          </div>
+          <div class="timer-controls">
+            <button id="pause-btn" class="control-btn">⏸ Pause</button>
+            <button id="cancel-btn" class="control-btn danger">✕ Give Up</button>
+          </div>
+        </div>
+
+        <!-- Break time -->
+        <div id="timer-break" class="timer-panel hidden">
+          <h2>Break Time! 🎉</h2>
+          <p class="break-message" id="break-message">Great work! Moo knitted 25 fish worth of scarves!</p>
+          <div class="break-reward">
+            <span class="reward-fish">+<span id="reward-amount">25</span></span>
+            <span class="stat-icon big">🐟</span>
+          </div>
+          <div class="break-timer">
+            <span id="break-timer-display">5:00</span> break remaining
+          </div>
+          <button id="skip-break-btn" class="big-btn secondary">Skip Break & Focus Again</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav">
+      <button class="nav-btn active" data-view="room">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Room</span>
+      </button>
+      <button class="nav-btn" data-view="shop">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">Shop</span>
+      </button>
+      <button class="nav-btn" data-view="tower">
+        <span class="nav-icon">🗼</span>
+        <span class="nav-label">Tower</span>
+      </button>
+      <button class="nav-btn" data-view="stats">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Stats</span>
+      </button>
+    </nav>
+
+    <!-- Shop View -->
+    <div id="shop-view" class="view hidden">
+      <div class="view-header">
+        <h2>Moo's Shop</h2>
+        <div class="shop-balance">
+          <span class="stat-icon">🐟</span>
+          <span id="shop-fish-count">0</span>
+        </div>
+      </div>
+      <div class="shop-categories">
+        <button class="cat-btn active" data-category="all">All</button>
+        <button class="cat-btn" data-category="furniture">Furniture</button>
+        <button class="cat-btn" data-category="plants">Plants</button>
+        <button class="cat-btn" data-category="decor">Decor</button>
+        <button class="cat-btn" data-category="cozy">Cozy</button>
+        <button class="cat-btn" data-category="lighting">Lighting</button>
+      </div>
+      <div id="shop-items" class="shop-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Tower View -->
+    <div id="tower-view" class="view hidden">
+      <div class="view-header">
+        <h2>Moo's Tower</h2>
+        <p class="tower-subtitle">Unlock new floors by focusing!</p>
+      </div>
+      <div id="tower-container">
+        <!-- Tower floors rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Stats View -->
+    <div id="stats-view" class="view hidden">
+      <div class="view-header">
+        <h2>Focus Stats</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-total-sessions">0</div>
+          <div class="stat-card-label">Total Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-total-hours">0</div>
+          <div class="stat-card-label">Total Hours</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-longest-session">0</div>
+          <div class="stat-card-label">Longest Session (min)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-current-streak">0</div>
+          <div class="stat-card-label">Day Streak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-total-fish">0</div>
+          <div class="stat-card-label">Lifetime Fish</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-value" id="stat-items-owned">0</div>
+          <div class="stat-card-label">Items Owned</div>
+        </div>
+      </div>
+      <div class="weekly-chart">
+        <h3>This Week</h3>
+        <div id="weekly-bars" class="chart-bars">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast-container"></div>
+
+  <!-- Audio elements -->
+  <audio id="sfx-complete" preload="auto"></audio>
+  <audio id="sfx-purchase" preload="auto"></audio>
+  <audio id="sfx-click" preload="auto"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
